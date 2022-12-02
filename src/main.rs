@@ -11,6 +11,16 @@ extern crate serde_json;
 mod status;
 use status::ResponseError;
 
+mod db;
+use db::RocketDatabaseAdd;
+
+mod routes;
+use routes::RocketRoutesAdd;
+
+mod utils;
+
+pub mod schema;
+
 #[catch(404)]
 pub fn not_found_catcher(req: &Request) -> Json<ResponseError> {
     let err_msg = format!(
@@ -42,5 +52,8 @@ fn rocket() -> _ {
 
     let api_base = "/api/v1";
 
-    rocket::build().register(api_base, catchers![not_found_catcher, unhandled_catcher])
+    rocket::build()
+        .connect_database()
+        .register(api_base, catchers![not_found_catcher, unhandled_catcher])
+        .routes_add(api_base)
 }
