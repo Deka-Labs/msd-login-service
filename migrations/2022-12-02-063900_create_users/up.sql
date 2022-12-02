@@ -1,0 +1,8 @@
+-- Your SQL goes here
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    login VARCHAR(60) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    password_hash VARCHAR(256) NOT NULL
+);
