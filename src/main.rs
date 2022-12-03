@@ -17,9 +17,12 @@ use db::RocketDatabaseAdd;
 mod routes;
 use routes::RocketRoutesAdd;
 
+mod cors;
+use cors::RocketCorsEnabler;
+
 mod utils;
 
-pub mod schema;
+mod schema;
 
 #[catch(404)]
 pub fn not_found_catcher(req: &Request) -> Json<ResponseError> {
@@ -53,6 +56,7 @@ fn rocket() -> _ {
     let api_base = "/api/v1";
 
     rocket::build()
+        .enable_cors()
         .connect_database()
         .register(api_base, catchers![not_found_catcher, unhandled_catcher])
         .routes_add(api_base)
