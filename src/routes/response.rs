@@ -17,7 +17,7 @@ use crate::{db::User, status::ResponseError};
 pub struct UserSuccess {
     pub id: i32,
     pub email: String,
-    pub name: String,
+    pub login: String,
 }
 
 impl From<User> for UserSuccess {
@@ -25,7 +25,7 @@ impl From<User> for UserSuccess {
         Self {
             id: info.id,
             email: info.email,
-            name: info.login,
+            login: info.login,
         }
     }
 }
