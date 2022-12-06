@@ -6,6 +6,7 @@ use rocket::{serde::json::Json, Build, Rocket};
 
 mod response;
 use response::prelude::*;
+use serde_json::Value;
 
 pub trait RocketRoutesAdd {
     fn routes_add(self, api_base: &str) -> Self;
@@ -14,7 +15,7 @@ pub trait RocketRoutesAdd {
 impl RocketRoutesAdd for Rocket<Build> {
     fn routes_add(self, api_base: &str) -> Self {
         let path = format!("{}/user", api_base);
-        self.mount(path, routes![create_user, login,])
+        self.mount(path, routes![create_user, login, get_user_name])
     }
 }
 
@@ -73,4 +74,21 @@ fn login(
     }
 
     Ok(UserAuthedResponse::new(u.into()))
+}
+
+#[get("/<id>/name")]
+fn get_user_name(
+    id: i32,
+    mut user_db: UsersDatabase,
+) -> Result<Json<Value>, UserAuthErrorResponse> {
+    use diesel::result::Error::NotFound;
+
+    let u = user_db.find_user_by_id(id).map_err(|e| match e {
+        NotFound => UserAuthError::UserNotFound,
+        _ => UserAuthError::DatabaseError(e),
+    })?;
+
+    Ok(Json(json!({
+        "login": u.login,
+    })))
 }
